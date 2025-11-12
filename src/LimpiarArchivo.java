@@ -1,14 +1,16 @@
+import java.io.*;
+
 public class LimpiarArchivo {
 
     public static void main(String[] args) {
 
-        /* TODO 1: Validar los argumentos (debe haber 2: entrada y salida).
+        /* TODO 1: Validar los argumentos (debe haber 2: entrada y salida). TERMINADO
            - Si no son correctos, mostrar:
              "Uso: java limpiararchivo <entrada.txt> <salida.txt>"
            - Terminar el programa si faltan.
         */
 
-        /* TODO 2: Obtener las rutas de entrada y salida desde args[0] y args[1]. */
+        /* TODO 2: Obtener las rutas de entrada y salida desde args[0] y args[1]. EN PROCESO*/
 
         /* TODO 3: Abrir los flujos.
            - Crear BufferedReader envolviendo un FileReader con la ruta de entrada.
@@ -41,5 +43,76 @@ public class LimpiarArchivo {
         /* TODO 9 (opcional): Imprimir un resumen final:
            - Total de líneas escritas y la ruta del archivo de salida.
         */
+
+        if (validarArgumentos(args)) {
+            String entrada = args[0];
+            String salida = args[1];
+
+            BufferedReader brE = null;
+            BufferedWriter bwS = null;
+            try {
+                brE = new BufferedReader(new FileReader(entrada));
+                bwS = new BufferedWriter(new FileWriter(salida));
+
+                String linea =  brE.readLine();
+                int contador = 1;
+                while (linea != null) {
+                    // Procesamiento de líneas
+                    if (linea.trim().startsWith("#") || linea.isEmpty()) {
+                        continue;
+                    } else{
+                        bwS.write(contador + "\t" +  linea);
+                        bwS.newLine();
+                        contador++;
+                    }
+
+                    linea = brE.readLine();
+                }
+
+                bwS.flush(); // Descarga el BufferedWriter
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (bwS != null) {
+                        bwS.close(); // Cierra el writer
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (brE != null) {
+                        brE.close(); // Cierra el reader
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Metodo que comprueba que el programa admita solo 2 argumentos de entrada
+     * y que estos sean archivos con extensión (.txt)
+     * @param args array de argumentos del Main.
+     */
+    static boolean validarArgumentos(String[] args) {
+        boolean valido;
+        if (args.length == 2) {
+            if (args[0].endsWith(".txt") && args[1].endsWith(".txt")) {
+                valido  = true;
+            } else {
+                System.out.println("Argumentos incorrectos");
+                System.err.println("\tUso: java limpiararchivo <entrada.txt> <salida.txt>");
+                valido = false;
+            }
+        } else {
+            System.err.println("Solo se permiten dos argumentos de entrada.");
+            valido = false;
+        }
+
+        return valido;
     }
 }
